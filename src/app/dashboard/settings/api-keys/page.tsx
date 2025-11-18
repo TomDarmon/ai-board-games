@@ -30,8 +30,8 @@ import {
 	FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { ApiProvider } from "~/drizzle/schema";
-import { getProviderDisplayName } from "~/shared/models";
+import type { ApiProvider } from "~/drizzle/schema";
+import { getAllProviders, getProviderDisplayName } from "~/shared/models";
 import { getTRPCErrorMessage } from "~/trpc/error";
 import { api } from "~/trpc/react";
 
@@ -49,14 +49,27 @@ interface AddCredentialFormData {
 	apiKey: string;
 }
 
-const PROVIDERS = [ApiProvider.OpenAI, ApiProvider.Anthropic];
-const PROVIDER_URLS = {
-	[ApiProvider.OpenAI]: "https://platform.openai.com/api-keys",
-	[ApiProvider.Anthropic]: "https://console.anthropic.com/",
-};
-const PROVIDER_PLACEHOLDERS = {
-	[ApiProvider.OpenAI]: "sk-...",
-	[ApiProvider.Anthropic]: "sk-ant-...",
+// Provider-agnostic configuration
+const PROVIDERS = getAllProviders();
+
+interface ProviderMetadata {
+	url: string;
+	placeholder: string;
+	consoleName: string;
+}
+
+// Easy to extend with new providers
+const PROVIDER_METADATA: Record<ApiProvider, ProviderMetadata> = {
+	openai: {
+		url: "https://platform.openai.com/api-keys",
+		placeholder: "sk-...",
+		consoleName: "OpenAI Platform",
+	},
+	anthropic: {
+		url: "https://console.anthropic.com/",
+		placeholder: "sk-ant-...",
+		consoleName: "Anthropic Console",
+	},
 };
 
 export default function ApiKeysPage() {
@@ -66,9 +79,14 @@ export default function ApiKeysPage() {
 		null,
 	);
 
+	// Calculate which providers don't have credentials yet
+	const existingProviders = new Set(credentials.map((c) => c.provider));
+	const availableProviders = PROVIDERS.filter((p) => !existingProviders.has(p));
+	const hasAllProviders = availableProviders.length === 0;
+
 	const form = useForm<AddCredentialFormData>({
 		defaultValues: {
-			provider: ApiProvider.OpenAI,
+			provider: availableProviders[0] ?? PROVIDERS[0],
 			apiKey: "",
 		},
 	});
@@ -113,6 +131,17 @@ export default function ApiKeysPage() {
 		}
 	}, [listCredentials.data]);
 
+	// Update form default provider when available providers change
+	useEffect(() => {
+		if (availableProviders[0] !== undefined) {
+			const currentProvider = form.getValues("provider");
+			// If current provider is not available, reset to first available
+			if (!availableProviders.includes(currentProvider)) {
+				form.setValue("provider", availableProviders[0]);
+			}
+		}
+	}, [availableProviders, form]);
+
 	const formatDate = (dateString: string | null) =>
 		!dateString
 			? "Not validated"
@@ -140,7 +169,12 @@ export default function ApiKeysPage() {
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<Button onClick={() => setIsDialogOpen(true)}>Add API Key</Button>
+							<Button
+								onClick={() => setIsDialogOpen(true)}
+								disabled={hasAllProviders}
+							>
+								Add API Key
+							</Button>
 						</CardContent>
 					</Card>
 				) : (
@@ -192,14 +226,26 @@ export default function ApiKeysPage() {
 				)}
 			</div>
 
-			{credentials.length > 0 && (
+			{credentials.length > 0 && !hasAllProviders && (
 				<Button onClick={() => setIsDialogOpen(true)}>
 					Add Another API Key
 				</Button>
 			)}
 
 			{/* Add Key Dialog */}
-			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+			<Dialog
+				open={isDialogOpen}
+				onOpenChange={(open) => {
+					setIsDialogOpen(open);
+					if (open) {
+						// Reset form with the first available provider when dialog opens
+						form.reset({
+							provider: availableProviders[0] ?? PROVIDERS[0],
+							apiKey: "",
+						});
+					}
+				}}
+			>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Add API Key</DialogTitle>
@@ -223,7 +269,7 @@ export default function ApiKeysPage() {
 									<FormItem>
 										<FormLabel>Provider</FormLabel>
 										<div className="mt-2 flex gap-3">
-											{PROVIDERS.map((provider) => (
+											{availableProviders.map((provider) => (
 												<Button
 													key={provider}
 													type="button"
@@ -238,6 +284,11 @@ export default function ApiKeysPage() {
 												</Button>
 											))}
 										</div>
+										{availableProviders.length === 0 && (
+											<p className="text-muted-foreground text-sm">
+												All providers already have API keys configured
+											</p>
+										)}
 									</FormItem>
 								)}
 							/>
@@ -255,7 +306,7 @@ export default function ApiKeysPage() {
 											<FormControl>
 												<Input
 													type="password"
-													placeholder={PROVIDER_PLACEHOLDERS[provider]}
+													placeholder={PROVIDER_METADATA[provider].placeholder}
 													disabled={form.formState.isSubmitting}
 													{...field}
 												/>
@@ -263,14 +314,12 @@ export default function ApiKeysPage() {
 											<FormDescription>
 												Get your key from{" "}
 												<a
-													href={PROVIDER_URLS[provider]}
+													href={PROVIDER_METADATA[provider].url}
 													target="_blank"
 													rel="noopener noreferrer"
 													className="underline hover:text-foreground"
 												>
-													{provider === ApiProvider.OpenAI
-														? "OpenAI Platform"
-														: "Anthropic Console"}
+													{PROVIDER_METADATA[provider].consoleName}
 												</a>
 											</FormDescription>
 											<FormMessage />

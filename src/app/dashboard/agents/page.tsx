@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ModelSelector } from "~/components/ModelSelector";
 import { Button } from "~/components/ui/button";
 import {
 	Card,
@@ -31,25 +32,13 @@ import {
 	FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-} from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
-import { ApiProvider } from "~/drizzle/schema";
+import { useProviderModels } from "~/hooks/use-provider-models";
 import {
 	type AIModel,
 	AnthropicModels,
 	OpenAIModels,
-	getAnthropicModelsList,
 	getModelDisplayName,
-	getOpenAIModelsList,
-	getProviderDisplayName,
 } from "~/shared/models";
 import { getTRPCErrorMessage } from "~/trpc/error";
 import { api } from "~/trpc/react";
@@ -110,6 +99,7 @@ export default function AgentsPage() {
 	});
 
 	const { data: agents, isLoading, refetch } = api.agent.list.useQuery();
+	const { hasAnyKey, availableModels } = useProviderModels();
 
 	const createAgent = api.agent.create.useMutation({
 		onSuccess: () => {
@@ -321,35 +311,13 @@ export default function AgentsPage() {
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Model</FormLabel>
-										<Select value={field.value} onValueChange={field.onChange}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent className="grid w-auto min-w-lg grid-cols-2 gap-0">
-												<SelectGroup>
-													<SelectLabel className="font-semibold">
-														{getProviderDisplayName(ApiProvider.OpenAI)}
-													</SelectLabel>
-													{getOpenAIModelsList().map((model) => (
-														<SelectItem key={model} value={model}>
-															{getModelDisplayName(model)}
-														</SelectItem>
-													))}
-												</SelectGroup>
-												<SelectGroup>
-													<SelectLabel className="font-semibold">
-														{getProviderDisplayName(ApiProvider.Anthropic)}
-													</SelectLabel>
-													{getAnthropicModelsList().map((model) => (
-														<SelectItem key={model} value={model}>
-															{getModelDisplayName(model)}
-														</SelectItem>
-													))}
-												</SelectGroup>
-											</SelectContent>
-										</Select>
+										<FormControl>
+											<ModelSelector
+												value={field.value}
+												onValueChange={field.onChange}
+												disabled={createForm.formState.isSubmitting}
+											/>
+										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -380,7 +348,10 @@ export default function AgentsPage() {
 								>
 									Cancel
 								</Button>
-								<Button type="submit" disabled={createAgent.isPending}>
+								<Button
+									type="submit"
+									disabled={createAgent.isPending || !hasAnyKey}
+								>
 									{createAgent.isPending ? "Creating..." : "Create Agent"}
 								</Button>
 							</DialogFooter>
@@ -422,35 +393,13 @@ export default function AgentsPage() {
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Model</FormLabel>
-										<Select value={field.value} onValueChange={field.onChange}>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent className="grid w-auto min-w-lg grid-cols-2 gap-0">
-												<SelectGroup>
-													<SelectLabel className="font-semibold">
-														{getProviderDisplayName(ApiProvider.OpenAI)}
-													</SelectLabel>
-													{getOpenAIModelsList().map((model) => (
-														<SelectItem key={model} value={model}>
-															{getModelDisplayName(model)}
-														</SelectItem>
-													))}
-												</SelectGroup>
-												<SelectGroup>
-													<SelectLabel className="font-semibold">
-														{getProviderDisplayName(ApiProvider.Anthropic)}
-													</SelectLabel>
-													{getAnthropicModelsList().map((model) => (
-														<SelectItem key={model} value={model}>
-															{getModelDisplayName(model)}
-														</SelectItem>
-													))}
-												</SelectGroup>
-											</SelectContent>
-										</Select>
+										<FormControl>
+											<ModelSelector
+												value={field.value}
+												onValueChange={field.onChange}
+												disabled={editForm.formState.isSubmitting}
+											/>
+										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -481,7 +430,10 @@ export default function AgentsPage() {
 								>
 									Cancel
 								</Button>
-								<Button type="submit" disabled={updateAgent.isPending}>
+								<Button
+									type="submit"
+									disabled={updateAgent.isPending || !hasAnyKey}
+								>
 									{updateAgent.isPending ? "Saving..." : "Save Changes"}
 								</Button>
 							</DialogFooter>

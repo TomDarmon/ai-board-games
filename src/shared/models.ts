@@ -84,11 +84,11 @@ export function getModelDisplayName(model: string | null | undefined): string {
 	return ModelDisplayNames[model as AIModel] ?? model;
 }
 
-export function getOpenAIModelsList(): AIModel[] {
+function getOpenAIModelsList(): AIModel[] {
 	return Object.values(OpenAIModels);
 }
 
-export function getAnthropicModelsList(): AIModel[] {
+function getAnthropicModelsList(): AIModel[] {
 	return Object.values(AnthropicModels);
 }
 
@@ -116,4 +116,34 @@ export function getProviderForModel(modelName: string): ApiProvider {
 	}
 
 	throw new Error(`Unknown model provider for model: ${modelName}`);
+}
+
+/**
+ * Configuration for each provider - makes it easy to add new providers
+ */
+interface ProviderConfig {
+	provider: ApiProvider;
+	displayName: string;
+	getModelsList: () => AIModel[];
+}
+
+const PROVIDER_CONFIGS: ProviderConfig[] = [
+	{
+		provider: ApiProvider.OpenAI,
+		displayName: "OpenAI",
+		getModelsList: getOpenAIModelsList,
+	},
+	{
+		provider: ApiProvider.Anthropic,
+		displayName: "Anthropic",
+		getModelsList: getAnthropicModelsList,
+	},
+];
+
+export function getProviderConfigs(): ProviderConfig[] {
+	return PROVIDER_CONFIGS;
+}
+
+export function getAllProviders(): ApiProvider[] {
+	return PROVIDER_CONFIGS.map((config) => config.provider);
 }
