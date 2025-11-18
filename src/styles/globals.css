@@ -1,0 +1,149 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+	--font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@theme inline {
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--color-background: hsl(var(--background));
+	--color-foreground: hsl(var(--foreground));
+	--color-card: hsl(var(--card));
+	--color-card-foreground: hsl(var(--card-foreground));
+	--color-popover: hsl(var(--popover));
+	--color-popover-foreground: hsl(var(--popover-foreground));
+	--color-primary: hsl(var(--primary));
+	--color-primary-foreground: hsl(var(--primary-foreground));
+	--color-secondary: hsl(var(--secondary));
+	--color-secondary-foreground: hsl(var(--secondary-foreground));
+	--color-muted: hsl(var(--muted));
+	--color-muted-foreground: hsl(var(--muted-foreground));
+	--color-accent: hsl(var(--accent));
+	--color-accent-foreground: hsl(var(--accent-foreground));
+	--color-destructive: hsl(var(--destructive));
+	--color-border: hsl(var(--border));
+	--color-input: hsl(var(--input));
+	--color-ring: hsl(var(--ring));
+	--color-chart-1: hsl(var(--chart-1));
+	--color-chart-2: hsl(var(--chart-2));
+	--color-chart-3: hsl(var(--chart-3));
+	--color-chart-4: hsl(var(--chart-4));
+	--color-chart-5: hsl(var(--chart-5));
+	--color-sidebar: hsl(var(--sidebar));
+	--color-sidebar-foreground: hsl(var(--sidebar-foreground));
+	--color-sidebar-primary: hsl(var(--sidebar-primary));
+	--color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+	--color-sidebar-accent: hsl(var(--sidebar-accent));
+	--color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+	--color-sidebar-border: hsl(var(--sidebar-border));
+	--color-sidebar-ring: hsl(var(--sidebar-ring));
+}
+
+:root {
+	--radius: 0.5rem;
+	--background: 0 0% 100%; /* white */
+	--foreground: 0 0% 0%; /* black */
+	--card: 0 0% 100%; /* white */
+	--card-foreground: 0 0% 0%; /* black */
+	--popover: 0 0% 100%; /* white */
+	--popover-foreground: 0 0% 0%; /* black */
+	--primary: 0 0% 0%; /* black */
+	--primary-foreground: 0 0% 100%; /* white */
+	--secondary: 0 0% 96%; /* light gray */
+	--secondary-foreground: 0 0% 0%; /* black */
+	--muted: 0 0% 96%; /* light gray */
+	--muted-foreground: 0 0% 40%; /* dark gray */
+	--accent: 0 0% 96%; /* light gray */
+	--accent-foreground: 0 0% 0%; /* black */
+	--destructive: 0 84% 60%; /* red */
+	--border: 0 0% 90%; /* light gray */
+	--input: 0 0% 90%; /* light gray */
+	--ring: 0 0% 0%; /* black */
+	--chart-1: 0 0% 20%; /* dark gray */
+	--chart-2: 0 0% 35%; /* medium gray */
+	--chart-3: 0 0% 50%; /* light gray */
+	--chart-4: 0 0% 65%; /* medium light gray */
+	--chart-5: 0 0% 80%; /* light gray */
+	--sidebar: 0 0% 100%; /* white */
+	--sidebar-foreground: 0 0% 0%; /* black */
+	--sidebar-primary: 0 0% 0%; /* black */
+	--sidebar-primary-foreground: 0 0% 100%; /* white */
+	--sidebar-accent: 0 0% 96%; /* light gray */
+	--sidebar-accent-foreground: 0 0% 0%; /* black */
+	--sidebar-border: 0 0% 90%; /* light gray */
+	--sidebar-ring: 0 0% 0%; /* black */
+}
+/* Start of Selection */
+
+.dark {
+	--background: 0 0% 0%; /* black */
+	--foreground: 0 0% 100%; /* white */
+	--card: 0 0% 5%; /* very dark gray */
+	--card-foreground: 0 0% 100%; /* white */
+	--popover: 0 0% 5%; /* very dark gray */
+	--popover-foreground: 0 0% 100%; /* white */
+	--primary: 0 0% 100%; /* white */
+	--primary-foreground: 0 0% 0%; /* black */
+	--secondary: 0 0% 10%; /* dark gray */
+	--secondary-foreground: 0 0% 100%; /* white */
+	--muted: 0 0% 10%; /* dark gray */
+	--muted-foreground: 0 0% 60%; /* medium gray */
+	--accent: 0 0% 10%; /* dark gray */
+	--accent-foreground: 0 0% 100%; /* white */
+	--destructive: 0 84% 60%; /* red */
+	--border: 0 0% 15%; /* dark gray */
+	--input: 0 0% 15%; /* dark gray */
+	--ring: 0 0% 100%; /* white */
+	--chart-1: 0 0% 80%; /* light gray */
+	--chart-2: 0 0% 65%; /* medium light gray */
+	--chart-3: 0 0% 50%; /* medium gray */
+	--chart-4: 0 0% 35%; /* medium dark gray */
+	--chart-5: 0 0% 20%; /* dark gray */
+	--sidebar: 0 0% 5%; /* very dark gray */
+	--sidebar-foreground: 0 0% 100%; /* white */
+	--sidebar-primary: 0 0% 100%; /* white */
+	--sidebar-primary-foreground: 0 0% 0%; /* black */
+	--sidebar-accent: 0 0% 10%; /* dark gray */
+	--sidebar-accent-foreground: 0 0% 100%; /* white */
+	--sidebar-border: 0 0% 15%; /* dark gray */
+	--sidebar-ring: 0 0% 100%; /* white */
+}
+
+/* End of Selection */
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}
+
+@layer utilities {
+	@keyframes drop-in {
+		0% {
+			transform: translate(-50%, -100%);
+			opacity: 0;
+		}
+		70% {
+			transform: translate(-50%, calc(var(--drop-distance) + 8px));
+			opacity: 1;
+		}
+		100% {
+			transform: translate(-50%, var(--drop-distance));
+			opacity: 1;
+		}
+	}
+
+	.animate-drop-in {
+		animation: drop-in 0.8s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+	}
+}
