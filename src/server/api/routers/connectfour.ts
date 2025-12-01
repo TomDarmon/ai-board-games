@@ -76,7 +76,7 @@ export const connectFourRouter = createTRPCRouter({
 				where: and(eq(gameMatch.id, input.id), eq(gameMatch.userId, userId)),
 				with: {
 					gameTurns: {
-						orderBy: desc(gameTurn.moveNumber),
+						orderBy: asc(gameTurn.moveNumber),
 					},
 				},
 			});

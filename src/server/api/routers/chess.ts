@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { GameType, MatchStatus, gameTurn } from "~/drizzle/schema";
 import { type PlayerId, gameMatch } from "~/drizzle/schema";
@@ -76,7 +76,7 @@ export const chessRouter = createTRPCRouter({
 				where: and(eq(gameMatch.id, input.id), eq(gameMatch.userId, userId)),
 				with: {
 					gameTurns: {
-						orderBy: desc(gameTurn.moveNumber),
+						orderBy: asc(gameTurn.moveNumber),
 					},
 				},
 			});
