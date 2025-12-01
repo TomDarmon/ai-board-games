@@ -20,7 +20,7 @@ export const auth = betterAuth({
 		sendResetPassword: async ({ user, url }) => {
 			try {
 				await resend.emails.send({
-					from: "onboarding@resend.dev", // Resend's default testing domain
+					from: "no-reply@notifications.leaguelo.com", // Resend's default testing domain
 					to: user.email,
 					subject: "Reset Your Password",
 					html: `
