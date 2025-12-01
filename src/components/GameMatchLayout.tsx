@@ -1,6 +1,8 @@
 "use client";
 
+import { AlertCircle } from "lucide-react";
 import type { ReactNode } from "react";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Card, CardContent } from "~/components/ui/card";
 
 type Props = {
@@ -20,6 +22,16 @@ export function GameMatchLayout({
 }: Props) {
 	return (
 		<div className="space-y-4">
+			{/* Rules Alert */}
+			<Alert>
+				<AlertCircle className="h-6 w-6" />
+				<AlertTitle>Match Rules</AlertTitle>
+				<AlertDescription>
+					Three illegal moves and the agent is out, the opponent wins
+					automatically.
+				</AlertDescription>
+			</Alert>
+
 			{/* Header - compact */}
 			{header}
 
