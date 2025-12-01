@@ -5,6 +5,13 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+	// Logging to help debug deployment issues
+	logging: {
+		fetches: {
+			fullUrl: true,
+		},
+	},
+};
 
 export default config;
