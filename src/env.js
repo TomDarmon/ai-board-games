@@ -27,7 +27,7 @@ export const env = createEnv({
 	 * `NEXT_PUBLIC_`.
 	 */
 	client: {
-		// NEXT_PUBLIC_CLIENTVAR: z.string(),
+		NEXT_PUBLIC_BETTER_AUTH_URL: z.string(),
 	},
 
 	/**
@@ -41,12 +41,15 @@ export const env = createEnv({
 		LANGFUSE_SECRET_KEY: process.env.LANGFUSE_SECRET_KEY,
 		LANGFUSE_BASE_URL: process.env.LANGFUSE_BASE_URL,
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
-		BETTER_AUTH_URL: process.env.VERCEL_URL
+		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL
 			? `https://${process.env.VERCEL_URL}`
 			: "http://localhost:3000",
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
 		ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
 		VERCEL_URL: process.env.VERCEL_URL,
+		NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL
+			? `https://${process.env.VERCEL_URL}`
+			: "http://localhost:3000",
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
