@@ -1,30 +1,35 @@
-# AI Game Leaderboard
+# AI Board Games
 
-This is a [T3 Stack](https://create.t3.gg/) project with Better Auth for authentication, tRPC for API, and Prisma for database management.
+A Next.js web application for playing 2-player turn-based games against AI agents with real-time generative UI updates.
+
+## Overview
+
+This project demonstrates how to build interactive generative UI where AI agents take actions and the interface updates in real time. Users can play classic games like Tic-Tac-Toe, Connect Four, and Chess against intelligent AI opponents powered by LLMs.
+
+**Try it live:** [http://agent.leaguelo.com/](http://agent.leaguelo.com/) (or run locally with your own API keys)
+
+### Current Features
+
+- ✅ Three playable games: Tic-Tac-Toe, Connect Four, Chess
+- ✅ Real-time game streaming and UI updates
+- ✅ User authentication and secure API key management
+- ✅ Match history and replay functionality
+
+### In Progress / Planned Features
+
+- ⏳ **Restart Matches** - Allow users to restart or replay matches that have been stopped
+- ⏳ **Backend Error Handling** - Display user-friendly notifications when backend errors occur (API key limit reached, rate limits, internal errors, etc.)
+- ⏳ **Illegal Move Display** - Show illegal moves in the match history with clear indicators
+- ⏳ **Infinite Game Prevention** - Handle infinite chess games through:
+  - Move repetition detection
+  - Draw by repetition rules (3-fold repetition)
+  - 50-move rule implementation
+  - Stalemate and insufficient material detection
+- ⏳ **Prompt Inspection** - Allow users to view the exact prompts sent to AI agents for move generation
+  - View-only prompt display in match replay
+  - Inspect token usage and model responses per move
 
 ## Getting Started
-
-### Prerequisites
-
-- Bun (recommended) or Node.js
-- PostgreSQL database
-- OpenAI API key (for AI agents)
-- Anthropic API key (optional, for Claude agents)
-
-
-### Installation
-
-```bash
-# Install dependencies
-bun install
-
-# Generate Drizzle schema and run migrations
-bunx drizzle-kit generate
-bunx drizzle-kit push
-
-# Start the development server
-bun run dev
-```
 
 ## Environment Variables
 
@@ -38,14 +43,26 @@ LANGFUSE_PUBLIC_KEY=...
 LANGFUSE_SECRET_KEY=...
 LANGFUSE_BASE_URL=...
 RESEND_API_KEY=...
-OPENAI_API_KEY=... (optional - users can provide via dashboard)
-ANTHROPIC_API_KEY=... (optional - users can provide via dashboard)
 ```
 
 **ENCRYPTION_KEY**: Generate a 32-byte key for API key encryption (as base64):
 
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
+
+### Installation
+
+```bash
+# Install dependencies
+bun install
+
+# Generate Drizzle schema and run migrations
+bunx drizzle-kit generate
+bunx drizzle-kit push
+
+# Start the development server
+bun run dev
 ```
 
 ## Authentication
@@ -63,12 +80,9 @@ This project uses [Better Auth](https://www.better-auth.com) for authentication 
 
 ## API Keys
 
-Users can securely store and manage OpenAI and Anthropic API keys in the dashboard (**Settings > API Keys**):
+Users can securely store API keys in the dashboard (**Settings > API Keys**):
 
 - **Encrypted Storage**: Keys are encrypted with AES-256-GCM at rest
 - **No Server Overhead**: No need to provide API keys at deployment
 - **Per-User Keys**: Each user manages their own credentials
 - **Validation**: Keys are validated when saved
-
-The system falls back to `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` env vars if no user key is configured.
-
