@@ -25,6 +25,11 @@ function mapWinnerToGameResult(winner: string | null): GameResult | null {
 	return null;
 }
 
+type AgentInfo = {
+	name: string;
+	model?: string | null;
+};
+
 type TicTacToeTurn = {
 	moveNumber: number;
 	player: PlayerId;
@@ -40,6 +45,7 @@ type TicTacToeMatch = {
 	currentPlayer: PlayerId;
 	state: { board: (PlayerId | null)[] };
 	turns: TicTacToeTurn[];
+	agents: Partial<Record<PlayerId, AgentInfo>>;
 	createdAt: Date;
 	updatedAt: Date;
 };
@@ -71,6 +77,8 @@ export const ticTacToeRouter = createTRPCRouter({
 					gameTurns: {
 						orderBy: asc(gameTurn.moveNumber),
 					},
+					playerXAgent: true,
+					playerOAgent: true,
 				},
 			});
 
@@ -106,6 +114,21 @@ export const ticTacToeRouter = createTRPCRouter({
 				};
 			});
 
+			// Build agent info map
+			const agents: Partial<Record<PlayerId, AgentInfo>> = {};
+			if (match.playerXAgent) {
+				agents.X = {
+					name: match.playerXAgent.name,
+					model: match.playerXAgent.model,
+				};
+			}
+			if (match.playerOAgent) {
+				agents.O = {
+					name: match.playerOAgent.name,
+					model: match.playerOAgent.model,
+				};
+			}
+
 			return {
 				id: match.id,
 				gameType: GameType.ticTacToe,
@@ -114,6 +137,7 @@ export const ticTacToeRouter = createTRPCRouter({
 				currentPlayer: match.currentPlayer,
 				state,
 				turns,
+				agents,
 				createdAt: new Date(match.createdAt),
 				updatedAt: new Date(match.updatedAt),
 			};

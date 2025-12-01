@@ -53,7 +53,7 @@ export function ChessStreamingClient() {
 		winner,
 		currentPlayer,
 		turns,
-		agentNames,
+		agents,
 		error,
 		startMatch,
 		stopMatch,
@@ -141,20 +141,11 @@ export function ChessStreamingClient() {
 						winner={winner}
 						currentPlayer={currentPlayer}
 						turns={turns}
-						playerNames={{
-							[PlayerId.X]: agentNames[PlayerId.X]
-								? `${agentNames[PlayerId.X]} (White)`
-								: "White",
-							[PlayerId.O]: agentNames[PlayerId.O]
-								? `${agentNames[PlayerId.O]} (Black)`
-								: "Black",
+						playerLabels={{
+							[PlayerId.X]: "White",
+							[PlayerId.O]: "Black",
 						}}
-						customWinnerText={(winner) => {
-							if (winner === GameResult.draw) return "It's a Draw! 🤝";
-							return winner === GameResult.X
-								? "White Wins! 🎉"
-								: "Black Wins! 🎉";
-						}}
+						agents={agents}
 					/>
 				}
 				error={error}
@@ -176,7 +167,7 @@ export function ChessStreamingClient() {
 					renderBoard={(turns, currentStep) => (
 						<ChessBoard turns={turns} currentStep={currentStep} />
 					)}
-					playerNames={{
+					playerLabels={{
 						[PlayerId.X]: "White",
 						[PlayerId.O]: "Black",
 					}}

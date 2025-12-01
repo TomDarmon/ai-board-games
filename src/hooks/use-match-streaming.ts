@@ -19,6 +19,11 @@ import { type MatchUIMessage, dataPartNames } from "~/shared/match";
 import { getTRPCErrorMessage } from "~/trpc/error";
 import { api } from "~/trpc/react";
 
+export type AgentInfo = {
+	name: string;
+	model?: string | null;
+};
+
 type UseMatchStreamingOptions = {
 	onMatchStart?: (matchId: string) => void;
 	onMatchComplete?: (winner: GameResult) => void;
@@ -35,6 +40,9 @@ export function useMatchStreaming(options: UseMatchStreamingOptions = {}) {
 		[PlayerId.X]: "Player X",
 		[PlayerId.O]: "Player O",
 	});
+	const [agents, setAgents] = useState<Partial<Record<PlayerId, AgentInfo>>>(
+		{},
+	);
 	const router = useRouter();
 	const abandonMatch = api.match.abandon.useMutation();
 
@@ -49,11 +57,27 @@ export function useMatchStreaming(options: UseMatchStreamingOptions = {}) {
 				setCurrentPlayer(PlayerId.X); // X always starts
 				setTurns([]); // Reset turns for new match
 
-				// Set agent names if provided
+				// Set agent names if provided (for backwards compatibility)
 				setAgentNames({
 					[PlayerId.X]: initData.playerXAgentName ?? "Player X",
 					[PlayerId.O]: initData.playerOAgentName ?? "Player O",
 				});
+
+				// Set full agent info with model
+				const newAgents: Partial<Record<PlayerId, AgentInfo>> = {};
+				if (initData.playerXAgentName) {
+					newAgents[PlayerId.X] = {
+						name: initData.playerXAgentName,
+						model: initData.playerXModel ?? null,
+					};
+				}
+				if (initData.playerOAgentName) {
+					newAgents[PlayerId.O] = {
+						name: initData.playerOAgentName,
+						model: initData.playerOModel ?? null,
+					};
+				}
+				setAgents(newAgents);
 
 				options.onMatchStart?.(initData.matchId);
 			}
@@ -124,6 +148,7 @@ export function useMatchStreaming(options: UseMatchStreamingOptions = {}) {
 		setMatchId(null);
 		setIsComplete(false);
 		setTurns([]);
+		setAgents({});
 		// Send configuration to the streaming endpoint
 		void sendMessage({
 			role: "user",
@@ -157,6 +182,7 @@ export function useMatchStreaming(options: UseMatchStreamingOptions = {}) {
 		setWinner(null);
 		setCurrentPlayer(null);
 		setTurns([]);
+		setAgents({});
 	};
 
 	return {
@@ -167,6 +193,7 @@ export function useMatchStreaming(options: UseMatchStreamingOptions = {}) {
 		currentPlayer,
 		turns,
 		agentNames,
+		agents,
 		error,
 		messages,
 		startMatch,

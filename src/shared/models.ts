@@ -28,10 +28,22 @@ export const AnthropicModels = {
 	Claude35HaikuLatest: "claude-3-5-haiku-latest",
 } as const;
 
+// Mistral Models as const object for direct string usage
+export const MistralModels = {
+	MistralLarge: "mistral-large-latest",
+	MistralMedium: "mistral-medium-latest",
+	MistralSmall: "mistral-small-latest",
+	Codestral: "codestral-latest",
+	MistralNemo: "open-mistral-nemo",
+	Ministral8B: "ministral-8b-latest",
+	Ministral3B: "ministral-3b-latest",
+} as const;
+
 // Union type of all model values
 export type AIModel =
 	| (typeof OpenAIModels)[keyof typeof OpenAIModels]
-	| (typeof AnthropicModels)[keyof typeof AnthropicModels];
+	| (typeof AnthropicModels)[keyof typeof AnthropicModels]
+	| (typeof MistralModels)[keyof typeof MistralModels];
 
 const ModelDisplayNames: Record<AIModel, string> = {
 	[OpenAIModels.GPT5]: "GPT-5",
@@ -50,6 +62,13 @@ const ModelDisplayNames: Record<AIModel, string> = {
 	[AnthropicModels.ClaudeSonnet40]: "Claude Sonnet 4.0",
 	[AnthropicModels.Claude37SonnetLatest]: "Claude 3.7 Sonnet",
 	[AnthropicModels.Claude35HaikuLatest]: "Claude 3.5 Haiku",
+	[MistralModels.MistralLarge]: "Mistral Large",
+	[MistralModels.MistralMedium]: "Mistral Medium",
+	[MistralModels.MistralSmall]: "Mistral Small",
+	[MistralModels.Codestral]: "Codestral",
+	[MistralModels.MistralNemo]: "Mistral Nemo",
+	[MistralModels.Ministral8B]: "Ministral 8B",
+	[MistralModels.Ministral3B]: "Ministral 3B",
 };
 
 const ModelDescriptions: Record<AIModel, string> = {
@@ -77,6 +96,19 @@ const ModelDescriptions: Record<AIModel, string> = {
 		"Latest iteration with enhanced sonnet capabilities",
 	[AnthropicModels.Claude35HaikuLatest]:
 		"Optimized lightweight model for quick responses",
+	[MistralModels.MistralLarge]:
+		"Flagship model for complex reasoning and multilingual tasks",
+	[MistralModels.MistralSmall]:
+		"Efficient model balancing performance and cost",
+	[MistralModels.MistralMedium]: "Balanced model for general use",
+	[MistralModels.Codestral]:
+		"Specialized model for code generation and completion",
+	[MistralModels.MistralNemo]:
+		"Open-weight model with strong general capabilities",
+	[MistralModels.Ministral8B]:
+		"Compact 8B parameter model for efficient inference",
+	[MistralModels.Ministral3B]:
+		"Ultra-compact 3B model for fast, lightweight tasks",
 };
 
 export function getModelDisplayName(model: string | null | undefined): string {
@@ -92,12 +124,18 @@ function getAnthropicModelsList(): AIModel[] {
 	return Object.values(AnthropicModels);
 }
 
+function getMistralModelsList(): AIModel[] {
+	return Object.values(MistralModels);
+}
+
 export function getProviderDisplayName(provider: ApiProvider): string {
 	switch (provider) {
 		case ApiProvider.OpenAI:
 			return "OpenAI";
 		case ApiProvider.Anthropic:
 			return "Anthropic";
+		case ApiProvider.Mistral:
+			return "Mistral";
 		default:
 			return provider;
 	}
@@ -106,6 +144,7 @@ export function getProviderDisplayName(provider: ApiProvider): string {
 export function getProviderForModel(modelName: string): ApiProvider {
 	const openAIModelValues = Object.values(OpenAIModels) as string[];
 	const anthropicModelValues = Object.values(AnthropicModels) as string[];
+	const mistralModelValues = Object.values(MistralModels) as string[];
 
 	if (openAIModelValues.includes(modelName)) {
 		return ApiProvider.OpenAI;
@@ -113,6 +152,10 @@ export function getProviderForModel(modelName: string): ApiProvider {
 
 	if (anthropicModelValues.includes(modelName)) {
 		return ApiProvider.Anthropic;
+	}
+
+	if (mistralModelValues.includes(modelName)) {
+		return ApiProvider.Mistral;
 	}
 
 	throw new Error(`Unknown model provider for model: ${modelName}`);
@@ -137,6 +180,11 @@ const PROVIDER_CONFIGS: ProviderConfig[] = [
 		provider: ApiProvider.Anthropic,
 		displayName: "Anthropic",
 		getModelsList: getAnthropicModelsList,
+	},
+	{
+		provider: ApiProvider.Mistral,
+		displayName: "Mistral",
+		getModelsList: getMistralModelsList,
 	},
 ];
 

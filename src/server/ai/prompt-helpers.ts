@@ -30,17 +30,13 @@ function formatTicTacToePrompt(
 
 	return `You are playing Tic-Tac-Toe as player ${playerId}.
 
-Current board state (positions 0-8):
+Board (positions 0-8):
 ${boardDisplay}
 
-Available moves (positions): ${availablePositions}
+Available moves: ${availablePositions}
 
-You must respond with ONLY a valid JSON object in this exact format:
-{"position": <number>}
-
-Where <number> is one of the available positions: ${availablePositions}
-
-Example valid response: {"position": 4}`;
+Respond with valid JSON: {"position": <number>}
+Example: {"position": 4}`;
 }
 
 /**
@@ -68,17 +64,13 @@ function formatConnectFourPrompt(
 
 	return `You are playing Connect Four as player ${playerId}.
 
-Current board state (columns 0-6, row 0 is top):
+Board (columns 0-6):
 ${boardDisplay}
 
-Available moves (columns): ${availableColumns}
+Available moves: ${availableColumns}
 
-You must respond with ONLY a valid JSON object in this exact format:
-{"column": <number>}
-
-Where <number> is one of the available columns: ${availableColumns}
-
-Example valid response: {"column": 3}`;
+Respond with valid JSON: {"column": <number>}
+Example: {"column": 3}`;
 }
 
 /**
@@ -96,27 +88,20 @@ function formatChessPrompt(
 		.map((move, idx) => {
 			const from = (move.from as string).toUpperCase();
 			const to = (move.to as string).toUpperCase();
-			const promotion = move.promotion ? ` (promote to ${move.promotion})` : "";
-			return `${idx + 1}. ${from} to ${to}${promotion}`;
+			const promotion = move.promotion ? ` (${move.promotion})` : "";
+			return `${idx + 1}. ${from}-${to}${promotion}`;
 		})
-		.join("\n");
+		.join(", ");
 
 	return `You are playing Chess as player ${playerId === "X" ? "White" : "Black"}.
 
-Current position (FEN): ${fen}
+FEN: ${fen}
 
-Legal moves:
-${moveDescriptions}
+Legal moves: ${moveDescriptions}
 
-You must respond with ONLY a valid JSON object in this exact format:
-{"from": "<square>", "to": "<square>"}
-
-Or if promoting a pawn:
-{"from": "<square>", "to": "<square>", "promotion": "q"|"r"|"b"|"n"}
-
-Where squares are in lowercase (e.g., "e2", "e4").
-
-Example valid response: {"from": "e2", "to": "e4"}`;
+Respond with valid JSON: {"from": "<square>", "to": "<square>"}
+With promotion: {"from": "<square>", "to": "<square>", "promotion": "q"|"r"|"b"|"n"}
+Example: {"from": "e2", "to": "e4"}`;
 }
 
 /**

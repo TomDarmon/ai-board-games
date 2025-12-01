@@ -32,6 +32,11 @@ function mapWinnerToGameResult(winner: string | null): GameResult | null {
 
 type ChessSerializedState = { fen: string };
 
+type AgentInfo = {
+	name: string;
+	model?: string | null;
+};
+
 type ChessTurn = {
 	moveNumber: number;
 	player: PlayerId;
@@ -47,6 +52,7 @@ type ChessMatch = {
 	currentPlayer: PlayerId;
 	state: ChessSerializedState;
 	turns: ChessTurn[];
+	agents: Partial<Record<PlayerId, AgentInfo>>;
 	createdAt: Date;
 	updatedAt: Date;
 };
@@ -78,6 +84,8 @@ export const chessRouter = createTRPCRouter({
 					gameTurns: {
 						orderBy: asc(gameTurn.moveNumber),
 					},
+					playerXAgent: true,
+					playerOAgent: true,
 				},
 			});
 
@@ -111,6 +119,21 @@ export const chessRouter = createTRPCRouter({
 				};
 			});
 
+			// Build agent info map
+			const agents: Partial<Record<PlayerId, AgentInfo>> = {};
+			if (match.playerXAgent) {
+				agents.X = {
+					name: match.playerXAgent.name,
+					model: match.playerXAgent.model,
+				};
+			}
+			if (match.playerOAgent) {
+				agents.O = {
+					name: match.playerOAgent.name,
+					model: match.playerOAgent.model,
+				};
+			}
+
 			return {
 				id: match.id,
 				gameType: GameType.chess,
@@ -119,6 +142,7 @@ export const chessRouter = createTRPCRouter({
 				currentPlayer: match.currentPlayer,
 				state,
 				turns,
+				agents,
 				createdAt: new Date(match.createdAt),
 				updatedAt: new Date(match.updatedAt),
 			};

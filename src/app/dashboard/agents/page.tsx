@@ -37,20 +37,22 @@ import { useProviderModels } from "~/hooks/use-provider-models";
 import {
 	type AIModel,
 	AnthropicModels,
+	MistralModels,
 	OpenAIModels,
 	getModelDisplayName,
 } from "~/shared/models";
 import { getTRPCErrorMessage } from "~/trpc/error";
 import { api } from "~/trpc/react";
 
+const maxAgentNameLength = 100;
+const maxAgentPromptLength = 1000;
+
 // Create all possible model values for Zod enum
 const allModelValues = [
 	...Object.values(OpenAIModels),
 	...Object.values(AnthropicModels),
+	...Object.values(MistralModels),
 ] as const;
-
-const maxAgentNameLength = 100;
-const maxAgentPromptLength = 1000;
 
 const agentFormSchema = z.object({
 	name: z
@@ -60,7 +62,7 @@ const agentFormSchema = z.object({
 			maxAgentNameLength,
 			`Name is too long. Please keep it under ${maxAgentNameLength} characters.`,
 		),
-	model: z.enum(allModelValues as [string, ...string[]]),
+	model: z.enum(allModelValues),
 	prompt: z
 		.string()
 		.max(
@@ -141,7 +143,7 @@ export default function AgentsPage() {
 	const handleCreate = (data: AgentFormData) => {
 		createAgent.mutate({
 			name: data.name,
-			model: data.model as AIModel,
+			model: data.model,
 			prompt: data.prompt || undefined,
 		});
 	};
@@ -152,7 +154,7 @@ export default function AgentsPage() {
 		updateAgent.mutate({
 			id: selectedAgent,
 			name: data.name,
-			model: data.model as AIModel,
+			model: data.model,
 			prompt: data.prompt || undefined,
 		});
 	};

@@ -70,6 +70,11 @@ const PROVIDER_METADATA: Record<ApiProvider, ProviderMetadata> = {
 		placeholder: "sk-ant-...",
 		consoleName: "Anthropic Console",
 	},
+	mistral: {
+		url: "https://console.mistral.ai/home?workspace_dialog=apiKeys",
+		placeholder: "...",
+		consoleName: "Mistral Console",
+	},
 };
 
 export default function ApiKeysPage() {
@@ -164,8 +169,8 @@ export default function ApiKeysPage() {
 						<CardHeader>
 							<CardTitle>No API Keys Configured</CardTitle>
 							<CardDescription>
-								Add your OpenAI or Anthropic API key to enable agents to play
-								games
+								Add your OpenAI, Anthropic, or Mistral API key to enable agents
+								to play games
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
@@ -250,8 +255,8 @@ export default function ApiKeysPage() {
 					<DialogHeader>
 						<DialogTitle>Add API Key</DialogTitle>
 						<DialogDescription>
-							Paste your API key from OpenAI or Anthropic. Your key will be
-							encrypted and stored securely.
+							Paste your API key from OpenAI, Anthropic, or Mistral. Your key
+							will be encrypted and stored securely.
 						</DialogDescription>
 					</DialogHeader>
 

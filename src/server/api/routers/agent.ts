@@ -3,12 +3,13 @@ import { z } from "zod";
 
 import { agentProfile, gameMatch } from "~/drizzle/schema";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { AnthropicModels, OpenAIModels } from "~/shared/models";
+import { AnthropicModels, MistralModels, OpenAIModels } from "~/shared/models";
 
 // Create a tuple of all model values for zod enum
 const allModelValues = [
 	...Object.values(OpenAIModels),
 	...Object.values(AnthropicModels),
+	...Object.values(MistralModels),
 ] as const;
 
 export const agentRouter = createTRPCRouter({

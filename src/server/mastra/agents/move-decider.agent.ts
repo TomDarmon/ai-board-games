@@ -1,4 +1,5 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
+import { createMistral } from "@ai-sdk/mistral";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { z } from "zod";
@@ -83,12 +84,27 @@ export async function decideMove(
 
 	const userApiKey = decryptSecret(credential.encryptedApiKey);
 
-	// Create client with the appropriate API key
-	const openai = createOpenAI({ apiKey: userApiKey });
-	const anthropic = createAnthropic({ apiKey: userApiKey });
+	// Create client with the appropriate API key based on provider
+	const getModel = () => {
+		switch (provider) {
+			case ApiProvider.OpenAI: {
+				const openai = createOpenAI({ apiKey: userApiKey });
+				return openai(modelName);
+			}
+			case ApiProvider.Anthropic: {
+				const anthropic = createAnthropic({ apiKey: userApiKey });
+				return anthropic(modelName);
+			}
+			case ApiProvider.Mistral: {
+				const mistral = createMistral({ apiKey: userApiKey });
+				return mistral(modelName);
+			}
+			default:
+				throw new Error(`Unsupported provider: ${provider}`);
+		}
+	};
 
-	const model =
-		provider === ApiProvider.OpenAI ? openai(modelName) : anthropic(modelName);
+	const model = getModel();
 
 	const schema = getMoveSchema(gameType);
 

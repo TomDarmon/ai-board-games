@@ -9,7 +9,7 @@ import { GameLobbyMatchHistory } from "~/components/game/GameLobbyMatchHistory";
 import { GameLobbyStartCard } from "~/components/game/GameLobbyStartCard";
 import { TicTacToeBoard } from "~/components/tic-tac-toe/TicTacToeBoard";
 import { Button } from "~/components/ui/button";
-import { GameType } from "~/drizzle/schema";
+import { GameType, PlayerId } from "~/drizzle/schema";
 import { useMatchStreaming } from "~/hooks/use-match-streaming";
 import { GameResult, GameStatus } from "~/shared/@types";
 import { BATCH_SIZE, MATCHES_PER_PAGE } from "~/shared/constants";
@@ -53,7 +53,7 @@ export function TicTacToeStreamingClient() {
 		winner,
 		currentPlayer,
 		turns,
-		agentNames,
+		agents,
 		error,
 		startMatch,
 		stopMatch,
@@ -130,7 +130,11 @@ export function TicTacToeStreamingClient() {
 						winner={winner}
 						currentPlayer={currentPlayer}
 						turns={turns}
-						playerNames={agentNames}
+						playerLabels={{
+							[PlayerId.X]: "Player X",
+							[PlayerId.O]: "Player O",
+						}}
+						agents={agents}
 					/>
 				}
 				error={error}

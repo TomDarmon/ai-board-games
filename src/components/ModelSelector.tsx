@@ -52,7 +52,7 @@ export function ModelSelector({
 			<SelectTrigger>
 				<SelectValue />
 			</SelectTrigger>
-			<SelectContent className="grid w-auto min-w-lg grid-cols-2 gap-0">
+			<SelectContent className="grid w-auto min-w-lg grid-cols-3 gap-0">
 				{providerGroups.map((group) => (
 					<SelectGroup key={group.provider}>
 						{group.hasKey ? (

@@ -57,11 +57,13 @@ export const playerType = pgEnum("PlayerType", [
 export enum ApiProvider {
 	OpenAI = "openai",
 	Anthropic = "anthropic",
+	Mistral = "mistral",
 }
 
 export const apiProvider = pgEnum("ApiProvider", [
 	ApiProvider.OpenAI,
 	ApiProvider.Anthropic,
+	ApiProvider.Mistral,
 ]);
 
 export const verification = pgTable(

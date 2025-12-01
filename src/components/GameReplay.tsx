@@ -13,11 +13,12 @@ import {
 import { api } from "~/trpc/react";
 import { GameMatchLayout } from "./GameMatchLayout";
 import { GameMoveList } from "./GameMoveList";
-import { MatchInfoPanel } from "./MatchInfoPanel";
+import { type AgentInfo, MatchInfoPanel } from "./MatchInfoPanel";
 
 type BaseGameReplayProps = {
 	renderBoard: (turns: Turn[], currentStep: number) => ReactNode;
-	playerNames?: Record<PlayerId, string>;
+	/** Display labels for each player (e.g., "White" for chess, "Player X" for tic-tac-toe) */
+	playerLabels?: Record<PlayerId, string>;
 	formatMove?: (move: Turn["move"]) => string;
 	customWinnerText?: (winner: GameResult) => string;
 };
@@ -47,7 +48,7 @@ export function GameReplay(props: GameReplayProps) {
 		matchId,
 		gameType,
 		renderBoard,
-		playerNames,
+		playerLabels,
 		formatMove,
 		customWinnerText,
 	} = props;
@@ -119,6 +120,10 @@ export function GameReplay(props: GameReplayProps) {
 	const maxStep = turns.length;
 	const isLive = match.status === GameStatus.playing;
 
+	// Extract agent info from match data
+	const agents: Partial<Record<PlayerId, AgentInfo>> =
+		(match as { agents?: Partial<Record<PlayerId, AgentInfo>> }).agents ?? {};
+
 	return (
 		<GameMatchLayout
 			board={renderBoard(turns, currentStep)}
@@ -127,7 +132,7 @@ export function GameReplay(props: GameReplayProps) {
 					turns={turns}
 					currentStep={currentStep}
 					onMoveClick={(step) => setCurrentStep(step)}
-					playerNames={playerNames}
+					playerNames={playerLabels}
 					formatMove={formatMove}
 				/>
 			}
@@ -138,8 +143,8 @@ export function GameReplay(props: GameReplayProps) {
 						winner={match.winner as GameResult}
 						currentPlayer={match.currentPlayer as PlayerId}
 						turns={turns.slice(0, currentStep)}
-						playerNames={playerNames}
-						customWinnerText={customWinnerText}
+						playerLabels={playerLabels}
+						agents={agents}
 					/>
 				</div>
 			}

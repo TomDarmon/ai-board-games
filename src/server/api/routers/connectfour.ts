@@ -32,6 +32,11 @@ function mapWinnerToGameResult(winner: string | null): GameResult | null {
 
 type ConnectFourBoard = (PlayerId | null)[][];
 
+type AgentInfo = {
+	name: string;
+	model?: string | null;
+};
+
 type ConnectFourTurn = {
 	moveNumber: number;
 	player: PlayerId;
@@ -47,6 +52,7 @@ type ConnectFourMatch = {
 	currentPlayer: PlayerId;
 	state: { board: ConnectFourBoard };
 	turns: ConnectFourTurn[];
+	agents: Partial<Record<PlayerId, AgentInfo>>;
 	createdAt: Date;
 	updatedAt: Date;
 };
@@ -78,6 +84,8 @@ export const connectFourRouter = createTRPCRouter({
 					gameTurns: {
 						orderBy: asc(gameTurn.moveNumber),
 					},
+					playerXAgent: true,
+					playerOAgent: true,
 				},
 			});
 
@@ -113,6 +121,21 @@ export const connectFourRouter = createTRPCRouter({
 				};
 			});
 
+			// Build agent info map
+			const agents: Partial<Record<PlayerId, AgentInfo>> = {};
+			if (match.playerXAgent) {
+				agents.X = {
+					name: match.playerXAgent.name,
+					model: match.playerXAgent.model,
+				};
+			}
+			if (match.playerOAgent) {
+				agents.O = {
+					name: match.playerOAgent.name,
+					model: match.playerOAgent.model,
+				};
+			}
+
 			return {
 				id: match.id,
 				gameType: GameType.connectFour,
@@ -121,6 +144,7 @@ export const connectFourRouter = createTRPCRouter({
 				currentPlayer: match.currentPlayer,
 				state,
 				turns,
+				agents,
 				createdAt: new Date(match.createdAt),
 				updatedAt: new Date(match.updatedAt),
 			};

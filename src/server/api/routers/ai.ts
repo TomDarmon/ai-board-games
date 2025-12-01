@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { Anthropic } from "@anthropic-ai/sdk";
+import { Mistral } from "@mistralai/mistralai";
 import { OpenAI } from "openai";
 import { ApiProvider, userApiCredential } from "~/drizzle/schema";
 import { env } from "~/env";
@@ -34,7 +35,11 @@ export const aiRouter = createTRPCRouter({
 	saveCredential: protectedProcedure
 		.input(
 			z.object({
-				provider: z.enum([ApiProvider.OpenAI, ApiProvider.Anthropic]),
+				provider: z.enum([
+					ApiProvider.OpenAI,
+					ApiProvider.Anthropic,
+					ApiProvider.Mistral,
+				]),
 				apiKey: z.string().min(20),
 			}),
 		)
@@ -50,6 +55,9 @@ export const aiRouter = createTRPCRouter({
 				} else if (provider === ApiProvider.Anthropic) {
 					const anthropicClient = new Anthropic({ apiKey });
 					await anthropicClient.models.list();
+				} else if (provider === ApiProvider.Mistral) {
+					const mistralClient = new Mistral({ apiKey });
+					await mistralClient.models.list();
 				} else {
 					throw new TRPCError({
 						code: "BAD_REQUEST",
@@ -141,7 +149,11 @@ export const aiRouter = createTRPCRouter({
 	deleteCredential: protectedProcedure
 		.input(
 			z.object({
-				provider: z.enum([ApiProvider.OpenAI, ApiProvider.Anthropic]),
+				provider: z.enum([
+					ApiProvider.OpenAI,
+					ApiProvider.Anthropic,
+					ApiProvider.Mistral,
+				]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

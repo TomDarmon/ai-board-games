@@ -9,7 +9,7 @@ import { ConnectFourBoard } from "~/components/connect-four/ConnectFourBoard";
 import { GameLobbyMatchHistory } from "~/components/game/GameLobbyMatchHistory";
 import { GameLobbyStartCard } from "~/components/game/GameLobbyStartCard";
 import { Button } from "~/components/ui/button";
-import { GameType } from "~/drizzle/schema";
+import { GameType, PlayerId } from "~/drizzle/schema";
 import { useMatchStreaming } from "~/hooks/use-match-streaming";
 import { GameResult, GameStatus } from "~/shared/@types";
 import { BATCH_SIZE, MATCHES_PER_PAGE } from "~/shared/constants";
@@ -65,7 +65,7 @@ export function ConnectFourStreamingClient() {
 		winner,
 		currentPlayer,
 		turns,
-		agentNames,
+		agents,
 		error,
 		startMatch,
 		stopMatch,
@@ -142,7 +142,11 @@ export function ConnectFourStreamingClient() {
 						winner={winner}
 						currentPlayer={currentPlayer}
 						turns={turns}
-						playerNames={agentNames}
+						playerLabels={{
+							[PlayerId.X]: "Player X",
+							[PlayerId.O]: "Player O",
+						}}
+						agents={agents}
 					/>
 				}
 				error={error}
